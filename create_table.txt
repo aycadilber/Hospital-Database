@@ -1,0 +1,228 @@
+CREATE DATABASE HOSPITAL
+
+USE HOSPITAL
+
+
+
+CREATE TABLE CLINIC(
+clinic_id int not null,
+clinic_name varchar(50) not null,
+CONSTRAINT PK_Clinic PRIMARY KEY (clinic_id),
+
+);
+
+
+CREATE TABLE LOCATION_INFORMATION(
+address_id int not null,
+city varchar(50) not null,
+town varchar(50) not null,
+street varchar(50) not null,
+country varchar(50) not null,
+CONSTRAINT PK_Location PRIMARY KEY (address_id)
+
+);
+
+
+CREATE TABLE DOCTOR(
+doctor_id int not null,
+full_name nvarchar(50) not null,
+phone_number varchar(15) not null,
+is_male bit,
+age int not null,
+hire_date datetime not null,
+salary money not null,
+clinic_id int not null,
+address_id int not null,
+
+CONSTRAINT PK_Doctor PRIMARY KEY (doctor_id),
+CONSTRAINT FK_Clinic FOREIGN KEY (clinic_id) REFERENCES CLINIC(clinic_id),
+CONSTRAINT FK_Address FOREIGN KEY (address_id) REFERENCES LOCATION_INFORMATION(address_id),
+
+);
+
+
+
+CREATE TABLE NURSE(
+nurse_id int not null,
+full_name nvarchar(50) not null,
+age int not null,
+hire_date datetime not null,
+salary money not null,
+clinic_id int not null,
+address_id int not null,
+
+CONSTRAINT PK_Nurse PRIMARY KEY (nurse_id),
+CONSTRAINT FK_Nurse_Clinic FOREIGN KEY (clinic_id) REFERENCES CLINIC(clinic_id),
+CONSTRAINT FK_Nurse_Address FOREIGN KEY (address_id) REFERENCES LOCATION_INFORMATION(address_id),
+
+);
+
+
+
+
+
+CREATE TABLE PATIENT(
+patient_id int not null,
+full_name nvarchar(50) not null,
+age int not null,
+blood_type varchar(7) not null,
+is_male bit,
+phone_number varchar(15) not null,
+doctor_id int not null,
+address_id int not null,
+nurse_id int not  null,
+
+CONSTRAINT PK_Patient PRIMARY KEY (patient_id),
+CONSTRAINT FK_Doctor FOREIGN KEY (doctor_id) REFERENCES DOCTOR(doctor_id),
+CONSTRAINT FK_Patient_Address FOREIGN KEY (address_id) REFERENCES LOCATION_INFORMATION(address_id),
+CONSTRAINT FK_Nurse FOREIGN KEY (nurse_id) REFERENCES NURSE(nurse_id),
+
+);
+
+
+CREATE TABLE APPOINTMENT(
+appointment_id int not null,
+appointment_date datetime not null,
+attented bit not null,
+patient_id int not null,
+doctor_id int not null,
+
+
+CONSTRAINT PK_Appointment PRIMARY KEY (appointment_id),
+CONSTRAINT FK_Patient FOREIGN KEY (patient_id) REFERENCES PATIENT(patient_id),
+CONSTRAINT FK_Appointment_Doctor FOREIGN KEY (doctor_id) REFERENCES DOCTOR(doctor_id),
+
+
+);
+
+
+
+
+
+CREATE TABLE ILLNESS(
+illness_id int not null,
+illness_name nvarchar(50) not null,
+CONSTRAINT PK_Illness PRIMARY KEY (illness_id),
+
+);
+
+
+CREATE TABLE PATIENT_ILLNESS(
+illness_id int not null,
+patient_id int not null,
+
+CONSTRAINT PK_Patient_Illness PRIMARY KEY (illness_id, patient_id),
+CONSTRAINT FK_Patient_Ilness FOREIGN KEY (patient_id) REFERENCES PATIENT(patient_id),
+CONSTRAINT FK_Illness FOREIGN KEY (illness_id) REFERENCES ILLNESS(illness_id),
+
+);
+
+
+CREATE TABLE PAYMENT(
+payment_id int not null,
+payment_type varchar(50) not null,
+payment_total money not null,
+payment_description varchar(50) not null,
+patient_id int not null,
+doctor_id int not null,
+
+
+CONSTRAINT PK_Payment PRIMARY KEY (payment_id),
+CONSTRAINT FK_Patient_Payment FOREIGN KEY (patient_id) REFERENCES PATIENT(patient_id),
+CONSTRAINT FK_Doctor_Payment FOREIGN KEY (doctor_id) REFERENCES DOCTOR(doctor_id),
+
+);
+
+ALTER TABLE PAYMENT
+DROP CONSTRAINT FK_Doctor_Payment;
+
+ALTER TABLE PAYMENT
+DROP COLUMN doctor_id;
+
+
+
+
+
+CREATE TABLE TEST(
+test_id int not null,
+test_name varchar(50) not null,
+
+CONSTRAINT PK_Test PRIMARY KEY (test_id),
+
+);
+
+
+CREATE TABLE PATIENT_TEST(
+patient_id int not null,
+test_id int not null,
+
+CONSTRAINT PK_Patient_Test PRIMARY KEY (patient_id, test_id),
+CONSTRAINT FK_Patient_Test FOREIGN KEY (patient_id) REFERENCES PATIENT(patient_id),
+CONSTRAINT FK_Test FOREIGN KEY (test_id) REFERENCES TEST(test_id),
+
+);
+
+
+
+
+
+
+CREATE TABLE SURGERY (
+ surgery_id int not null,
+ surgery_date datetime not null,
+ patient_id int not null,
+ 
+
+ CONSTRAINT PK_Surgery PRIMARY KEY (surgery_id),
+ 
+);
+
+ALTER TABLE SURGERY
+ADD CONSTRAINT FK_PatientId 
+FOREIGN KEY (patient_id) REFERENCES PATIENT(patient_id);
+
+ALTER TABLE SURGERY
+ADD surgery_name varchar(50);
+
+
+
+CREATE TABLE DOCTOR_SURGERY(
+doctor_id int not null,
+surgery_id int not null,
+
+CONSTRAINT PK_Doctor_Surgery PRIMARY KEY (doctor_id, surgery_id),
+CONSTRAINT FK_Doctor_Surgery FOREIGN KEY (doctor_id) REFERENCES DOCTOR(doctor_id),
+CONSTRAINT FK_Surgery FOREIGN KEY (surgery_id) REFERENCES SURGERY(surgery_id),
+
+);
+
+
+CREATE TABLE NURSE_SURGERY(
+nurse_id int not null,
+surgery_id int not null,
+
+CONSTRAINT PK_Nurse_Surgery PRIMARY KEY (nurse_id, surgery_id),
+CONSTRAINT FK_Nurse_Id FOREIGN KEY (nurse_id) REFERENCES NURSE(nurse_id),
+CONSTRAINT FK_Surgery_Id FOREIGN KEY (surgery_id) REFERENCES SURGERY(surgery_id),
+
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
